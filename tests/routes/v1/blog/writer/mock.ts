@@ -1,66 +1,60 @@
-import Blog from '../../../../../src/database/model/Blog';
+import Post from '../../../../../src/database/model/Post';
 import { Types } from 'mongoose';
 import { USER_ID_WRITER } from '../../../../auth/authorization/mock';
 
-jest.unmock('../../../../../src/database/repository/BlogRepo');
+jest.unmock('../../../../../src/database/repository/PostRepo');
 
-export const BLOG_ID = new Types.ObjectId();
-export const BLOG_ID_2 = new Types.ObjectId();
-export const BLOG_URL = 'abc';
+export const POST_ID = new Types.ObjectId();
+export const POST_ID_2 = new Types.ObjectId();
+export const POST_URL = 'abc';
 
-export const mockBlogFindUrlIfExists = jest.fn(
-  async (postUrl: string): Promise<Blog | null> => {
-    if (postUrl === BLOG_URL)
-      return {
-        _id: BLOG_ID,
-        postUrl: postUrl,
-      } as Blog;
-    return null;
-  },
-);
+export const mockPostFindUrlIfExists = jest.fn(async (postUrl: string): Promise<Post | null> => {
+  if (postUrl === POST_URL)
+    return {
+      _id: POST_ID,
+      postUrl: postUrl,
+    } as Post;
+  return null;
+});
 
-export const mockBlogCreate = jest.fn(
-  async (blog: Blog): Promise<Blog> => {
-    blog._id = BLOG_ID;
-    return blog;
-  },
-);
+export const mockPostCreate = jest.fn(async (post: Post): Promise<Post> => {
+  post._id = POST_ID;
+  return post;
+});
 
-export const mockBlogUpdate = jest.fn(async (blog: Blog): Promise<Blog> => blog);
+export const mockPostUpdate = jest.fn(async (post: Post): Promise<Post> => post);
 
-export const mockFindBlogAllDataById = jest.fn(
-  async (id: Types.ObjectId): Promise<Blog | null> => {
-    if (BLOG_ID.equals(id))
-      return {
-        _id: BLOG_ID,
-        author: { _id: USER_ID_WRITER },
-        isDraft: true,
-        isSubmitted: false,
-        isPublished: false,
-      } as Blog;
-    if (BLOG_ID_2.equals(id))
-      return {
-        _id: BLOG_ID,
-        author: { _id: new Types.ObjectId() },
-        isDraft: true,
-        isSubmitted: false,
-        isPublished: false,
-      } as Blog;
-    return null;
-  },
-);
+export const mockFindPostAllDataById = jest.fn(async (id: Types.ObjectId): Promise<Post | null> => {
+  if (POST_ID.equals(id))
+    return {
+      _id: POST_ID,
+      author: { _id: USER_ID_WRITER },
+      isDraft: true,
+      isSubmitted: false,
+      isPublished: false,
+    } as Post;
+  if (POST_ID_2.equals(id))
+    return {
+      _id: POST_ID,
+      author: { _id: new Types.ObjectId() },
+      isDraft: true,
+      isSubmitted: false,
+      isPublished: false,
+    } as Post;
+  return null;
+});
 
-jest.mock('../../../../../src/database/repository/BlogRepo', () => ({
+jest.mock('../../../../../src/database/repository/PostRepo', () => ({
   get findUrlIfExists() {
-    return mockBlogFindUrlIfExists;
+    return mockPostFindUrlIfExists;
   },
   get create() {
-    return mockBlogCreate;
+    return mockPostCreate;
   },
   get update() {
-    return mockBlogUpdate;
+    return mockPostUpdate;
   },
   get findPostAllDataById() {
-    return mockFindBlogAllDataById;
+    return mockFindPostAllDataById;
   },
 }));

@@ -1,7 +1,7 @@
 import express from 'express';
 import { SuccessResponse } from '../../../core/ApiResponse';
 import { NoDataError, BadRequestError } from '../../../core/ApiError';
-import BlogRepo from '../../../database/repository/BlogRepo';
+import PostRepo from '../../../database/repository/PostRepo';
 import { Types } from 'mongoose';
 import validator, { ValidationSource } from '../../../helpers/validator';
 import schema from './schema';
@@ -15,15 +15,15 @@ router.get(
   validator(schema.postTag, ValidationSource.PARAM),
   validator(schema.pagination, ValidationSource.QUERY),
   asyncHandler(async (req, res) => {
-    const blogs = await BlogRepo.findByTagAndPaginated(
+    const posts = await PostRepo.findByTagAndPaginated(
       req.params.tag,
       parseInt(req.query.pageNumber as string),
       parseInt(req.query.pageItemCount as string),
     );
 
-    if (!blogs || blogs.length < 1) throw new NoDataError();
+    if (!posts || posts.length < 1) throw new NoDataError();
 
-    return new SuccessResponse('success', blogs).send(res);
+    return new SuccessResponse('success', posts).send(res);
   }),
 );
 
@@ -31,13 +31,13 @@ router.get(
   '/author/id/:id',
   validator(schema.authorId, ValidationSource.PARAM),
   asyncHandler(async (req, res) => {
-    const blogs = await BlogRepo.findAllPublishedForAuthor({
+    const posts = await PostRepo.findAllPublishedForAuthor({
       _id: new Types.ObjectId(req.params.id),
     } as User);
 
-    if (!blogs || blogs.length < 1) throw new NoDataError();
+    if (!posts || posts.length < 1) throw new NoDataError();
 
-    return new SuccessResponse('success', blogs).send(res);
+    return new SuccessResponse('success', posts).send(res);
   }),
 );
 
@@ -45,14 +45,14 @@ router.get(
   '/latest',
   validator(schema.pagination, ValidationSource.QUERY),
   asyncHandler(async (req, res) => {
-    const blogs = await BlogRepo.findLatestPosts(
+    const posts = await PostRepo.findLatestPosts(
       parseInt(req.query.pageNumber as string),
       parseInt(req.query.pageItemCount as string),
     );
 
-    if (!blogs || blogs.length < 1) throw new NoDataError();
+    if (!posts || posts.length < 1) throw new NoDataError();
 
-    return new SuccessResponse('success', blogs).send(res);
+    return new SuccessResponse('success', posts).send(res);
   }),
 );
 
@@ -60,13 +60,13 @@ router.get(
   '/similar/id/:id',
   validator(schema.postId, ValidationSource.PARAM),
   asyncHandler(async (req, res) => {
-    const blog = await BlogRepo.findPostAllDataById(new Types.ObjectId(req.params.id));
-    if (!blog || !blog.isPublished) throw new BadRequestError('Blog is not available');
+    const post = await PostRepo.findPostAllDataById(new Types.ObjectId(req.params.id));
+    if (!post || !post.isPublished) throw new BadRequestError('Post is not available');
 
-    const blogs = await BlogRepo.searchSimilarPosts(blog, 6);
-    if (!blogs || blogs.length < 1) throw new NoDataError();
+    const posts = await PostRepo.searchSimilarPosts(post, 6);
+    if (!posts || posts.length < 1) throw new NoDataError();
 
-    return new SuccessResponse('success', blogs).send(res);
+    return new SuccessResponse('success', posts).send(res);
   }),
 );
 

@@ -1,7 +1,7 @@
 import express from 'express';
 import { SuccessResponse } from '../../../core/ApiResponse';
 import { BadRequestError } from '../../../core/ApiError';
-import BlogRepo from '../../../database/repository/BlogRepo';
+import PostRepo from '../../../database/repository/PostRepo';
 import { Types } from 'mongoose';
 import validator, { ValidationSource } from '../../../helpers/validator';
 import schema from './schema';
@@ -13,9 +13,9 @@ router.get(
   '/url',
   validator(schema.postUrl, ValidationSource.QUERY),
   asyncHandler(async (req, res) => {
-    const blog = await BlogRepo.findByUrl(req.query.endpoint as string);
-    if (!blog) throw new BadRequestError('Blog do not exists');
-    new SuccessResponse('success', blog).send(res);
+    const post = await PostRepo.findByUrl(req.query.endpoint as string);
+    if (!post) throw new BadRequestError('Post do not exists');
+    new SuccessResponse('success', post).send(res);
   }),
 );
 
@@ -23,9 +23,9 @@ router.get(
   '/id/:id',
   validator(schema.postId, ValidationSource.PARAM),
   asyncHandler(async (req, res) => {
-    const blog = await BlogRepo.findInfoWithTextById(new Types.ObjectId(req.params.id));
-    if (!blog) throw new BadRequestError('Blog do not exists');
-    return new SuccessResponse('success', blog).send(res);
+    const post = await PostRepo.findInfoWithTextById(new Types.ObjectId(req.params.id));
+    if (!post) throw new BadRequestError('Post do not exists');
+    return new SuccessResponse('success', post).send(res);
   }),
 );
 

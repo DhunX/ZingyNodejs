@@ -64,7 +64,7 @@ export default class UserRepo {
     user.createdAt = user.updatedAt = now;
     const createdUser = await UserModel.create(user);
     const keystore = await KeystoreRepo.create(createdUser._id, accessTokenKey, refreshTokenKey);
-    return { user: createdUser.toObject(), keystore: keystore };
+    return { user: createdUser, keystore: keystore };
   }
 
   public static async update(

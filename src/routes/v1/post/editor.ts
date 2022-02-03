@@ -2,7 +2,7 @@ import express from 'express';
 import { SuccessResponse, SuccessMsgResponse } from '../../../core/ApiResponse';
 import { ProtectedRequest } from 'app-request';
 import { BadRequestError, ForbiddenError } from '../../../core/ApiError';
-import BlogRepo from '../../../database/repository/BlogRepo';
+import PostRepo from '../../../database/repository/PostRepo';
 import { RoleCode } from '../../../database/model/Role';
 import { Types } from 'mongoose';
 import validator, { ValidationSource } from '../../../helpers/validator';
@@ -23,17 +23,17 @@ router.put(
   '/publish/:id',
   validator(schema.postId, ValidationSource.PARAM),
   asyncHandler(async (req: ProtectedRequest, res) => {
-    const blog = await BlogRepo.findPostAllDataById(new Types.ObjectId(req.params.id));
-    if (!blog) throw new BadRequestError('Blog does not exists');
+    const post = await PostRepo.findPostAllDataById(new Types.ObjectId(req.params.id));
+    if (!post) throw new BadRequestError('Post does not exists');
 
-    blog.isDraft = false;
-    blog.isSubmitted = false;
-    blog.isPublished = true;
-    blog.text = blog.draftText;
-    if (!blog.publishedAt) blog.publishedAt = new Date();
+    post.isDraft = false;
+    post.isSubmitted = false;
+    post.isPublished = true;
+    post.text = post.draftText;
+    if (!post.publishedAt) post.publishedAt = new Date();
 
-    await BlogRepo.update(blog);
-    return new SuccessMsgResponse('Blog published successfully').send(res);
+    await PostRepo.update(post);
+    return new SuccessMsgResponse('Post published successfully').send(res);
   }),
 );
 
@@ -41,15 +41,15 @@ router.put(
   '/unpublish/:id',
   validator(schema.postId, ValidationSource.PARAM),
   asyncHandler(async (req: ProtectedRequest, res) => {
-    const blog = await BlogRepo.findPostAllDataById(new Types.ObjectId(req.params.id));
-    if (!blog) throw new BadRequestError('Blog does not exists');
+    const post = await PostRepo.findPostAllDataById(new Types.ObjectId(req.params.id));
+    if (!post) throw new BadRequestError('Post does not exists');
 
-    blog.isDraft = true;
-    blog.isSubmitted = false;
-    blog.isPublished = false;
+    post.isDraft = true;
+    post.isSubmitted = false;
+    post.isPublished = false;
 
-    await BlogRepo.update(blog);
-    return new SuccessMsgResponse('Blog unpublished successfully').send(res);
+    await PostRepo.update(post);
+    return new SuccessMsgResponse('Post unpublished successfully').send(res);
   }),
 );
 
@@ -57,37 +57,37 @@ router.delete(
   '/id/:id',
   validator(schema.postId, ValidationSource.PARAM),
   asyncHandler(async (req: ProtectedRequest, res) => {
-    const blog = await BlogRepo.findPostAllDataById(new Types.ObjectId(req.params.id));
-    if (!blog) throw new BadRequestError('Blog does not exists');
+    const post = await PostRepo.findPostAllDataById(new Types.ObjectId(req.params.id));
+    if (!post) throw new BadRequestError('Post does not exists');
 
-    blog.status = false;
+    post.status = false;
 
-    await BlogRepo.update(blog);
-    return new SuccessMsgResponse('Blog deleted successfully').send(res);
+    await PostRepo.update(post);
+    return new SuccessMsgResponse('Post deleted successfully').send(res);
   }),
 );
 
 router.get(
   '/published/all',
   asyncHandler(async (req: ProtectedRequest, res) => {
-    const blogs = await BlogRepo.findAllPublished();
-    return new SuccessResponse('success', blogs).send(res);
+    const posts = await PostRepo.findAllPublished();
+    return new SuccessResponse('success', posts).send(res);
   }),
 );
 
 router.get(
   '/submitted/all',
   asyncHandler(async (req: ProtectedRequest, res) => {
-    const blogs = await BlogRepo.findAllSubmissions();
-    return new SuccessResponse('success', blogs).send(res);
+    const posts = await PostRepo.findAllSubmissions();
+    return new SuccessResponse('success', posts).send(res);
   }),
 );
 
 router.get(
   '/drafts/all',
   asyncHandler(async (req: ProtectedRequest, res) => {
-    const blogs = await BlogRepo.findAllDrafts();
-    return new SuccessResponse('success', blogs).send(res);
+    const posts = await PostRepo.findAllDrafts();
+    return new SuccessResponse('success', posts).send(res);
   }),
 );
 
@@ -95,12 +95,12 @@ router.get(
   '/id/:id',
   validator(schema.postId, ValidationSource.PARAM),
   asyncHandler(async (req: ProtectedRequest, res) => {
-    const blog = await BlogRepo.findPostAllDataById(new Types.ObjectId(req.params.id));
+    const post = await PostRepo.findPostAllDataById(new Types.ObjectId(req.params.id));
 
-    if (!blog) throw new BadRequestError('Blog does not exists');
-    if (!blog.isSubmitted && !blog.isPublished) throw new ForbiddenError('This blog is private');
+    if (!post) throw new BadRequestError('Post does not exists');
+    if (!post.isSubmitted && !post.isPublished) throw new ForbiddenError('This post is private');
 
-    new SuccessResponse('success', blog).send(res);
+    new SuccessResponse('success', post).send(res);
   }),
 );
 

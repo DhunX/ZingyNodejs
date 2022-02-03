@@ -2,8 +2,8 @@ import express from 'express';
 import { SuccessResponse, SuccessMsgResponse } from '../../../core/ApiResponse';
 import { ProtectedRequest } from 'app-request';
 import { BadRequestError, ForbiddenError } from '../../../core/ApiError';
-import BlogRepo from '../../../database/repository/BlogRepo';
-import Blog from '../../../database/model/Blog';
+import PostRepo from '../../../database/repository/PostRepo';
+import Post from '../../../database/model/Post';
 import { RoleCode } from '../../../database/model/Role';
 import { Types } from 'mongoose';
 import validator, { ValidationSource } from '../../../helpers/validator';
@@ -28,10 +28,10 @@ router.post(
   asyncHandler(async (req: ProtectedRequest, res) => {
     req.body.postUrl = formatEndpoint(req.body.postUrl);
 
-    const blog = await BlogRepo.findUrlIfExists(req.body.postUrl);
-    if (blog) throw new BadRequestError('Blog with this url already exists');
+    const post = await PostRepo.findUrlIfExists(req.body.postUrl);
+    if (post) throw new BadRequestError('Post with this url already exists');
 
-    const createdBlog = await BlogRepo.create({
+    const createdPost = await PostRepo.create({
       title: req.body.title,
       description: req.body.description,
       draftText: req.body.text,
@@ -42,9 +42,9 @@ router.post(
       score: req.body.score,
       createdBy: req.user,
       updatedBy: req.user,
-    } as Blog);
+    } as Post);
 
-    new SuccessResponse('Blog created successfully', createdBlog).send(res);
+    new SuccessResponse('Post created successfully', createdPost).send(res);
   }),
 );
 
@@ -53,27 +53,27 @@ router.put(
   validator(schema.postId, ValidationSource.PARAM),
   validator(schema.postUpdate),
   asyncHandler(async (req: ProtectedRequest, res) => {
-    const blog = await BlogRepo.findPostAllDataById(new Types.ObjectId(req.params.id));
-    if (blog == null) throw new BadRequestError('Blog does not exists');
-    if (!blog.author._id.equals(req.user._id))
+    const post = await PostRepo.findPostAllDataById(new Types.ObjectId(req.params.id));
+    if (post == null) throw new BadRequestError('Post does not exists');
+    if (!post.author._id.equals(req.user._id))
       throw new ForbiddenError("You don't have necessary permissions");
 
     if (req.body.postUrl) {
       const endpoint = formatEndpoint(req.body.postUrl);
-      const existingBlog = await BlogRepo.findUrlIfExists(endpoint);
-      if (existingBlog) throw new BadRequestError('Blog URL already used');
-      if (req.body.postUrl) blog.postUrl = endpoint;
+      const existingPost = await PostRepo.findUrlIfExists(endpoint);
+      if (existingPost) throw new BadRequestError('Post URL already used');
+      if (req.body.postUrl) post.postUrl = endpoint;
     }
 
-    if (req.body.title) blog.title = req.body.title;
-    if (req.body.description) blog.description = req.body.description;
-    if (req.body.text) blog.draftText = req.body.text;
-    if (req.body.tags) blog.tags = req.body.tags;
-    if (req.body.imgUrl) blog.imgUrl = req.body.imgUrl;
-    if (req.body.score) blog.score = req.body.score;
+    if (req.body.title) post.title = req.body.title;
+    if (req.body.description) post.description = req.body.description;
+    if (req.body.text) post.draftText = req.body.text;
+    if (req.body.tags) post.tags = req.body.tags;
+    if (req.body.imgUrl) post.imgUrl = req.body.imgUrl;
+    if (req.body.score) post.score = req.body.score;
 
-    await BlogRepo.update(blog);
-    new SuccessResponse('Blog updated successfully', blog).send(res);
+    await PostRepo.update(post);
+    new SuccessResponse('Post updated successfully', post).send(res);
   }),
 );
 
@@ -81,16 +81,16 @@ router.put(
   '/submit/:id',
   validator(schema.postId, ValidationSource.PARAM),
   asyncHandler(async (req: ProtectedRequest, res) => {
-    const blog = await BlogRepo.findPostAllDataById(new Types.ObjectId(req.params.id));
-    if (!blog) throw new BadRequestError('Blog does not exists');
-    if (!blog.author._id.equals(req.user._id))
+    const post = await PostRepo.findPostAllDataById(new Types.ObjectId(req.params.id));
+    if (!post) throw new BadRequestError('Post does not exists');
+    if (!post.author._id.equals(req.user._id))
       throw new ForbiddenError("You don't have necessary permissions");
 
-    blog.isSubmitted = true;
-    blog.isDraft = false;
+    post.isSubmitted = true;
+    post.isDraft = false;
 
-    await BlogRepo.update(blog);
-    return new SuccessMsgResponse('Blog submitted successfully').send(res);
+    await PostRepo.update(post);
+    return new SuccessMsgResponse('Post submitted successfully').send(res);
   }),
 );
 
@@ -98,16 +98,16 @@ router.put(
   '/withdraw/:id',
   validator(schema.postId, ValidationSource.PARAM),
   asyncHandler(async (req: ProtectedRequest, res) => {
-    const blog = await BlogRepo.findPostAllDataById(new Types.ObjectId(req.params.id));
-    if (!blog) throw new BadRequestError('Blog does not exists');
-    if (!blog.author._id.equals(req.user._id))
+    const post = await PostRepo.findPostAllDataById(new Types.ObjectId(req.params.id));
+    if (!post) throw new BadRequestError('Post does not exists');
+    if (!post.author._id.equals(req.user._id))
       throw new ForbiddenError("You don't have necessary permissions");
 
-    blog.isSubmitted = false;
-    blog.isDraft = true;
+    post.isSubmitted = false;
+    post.isDraft = true;
 
-    await BlogRepo.update(blog);
-    return new SuccessMsgResponse('Blog withdrawn successfully').send(res);
+    await PostRepo.update(post);
+    return new SuccessMsgResponse('Post withdrawn successfully').send(res);
   }),
 );
 
@@ -115,45 +115,45 @@ router.delete(
   '/id/:id',
   validator(schema.postId, ValidationSource.PARAM),
   asyncHandler(async (req: ProtectedRequest, res) => {
-    const blog = await BlogRepo.findPostAllDataById(new Types.ObjectId(req.params.id));
-    if (!blog) throw new BadRequestError('Blog does not exists');
-    if (!blog.author._id.equals(req.user._id))
+    const post = await PostRepo.findPostAllDataById(new Types.ObjectId(req.params.id));
+    if (!post) throw new BadRequestError('Post does not exists');
+    if (!post.author._id.equals(req.user._id))
       throw new ForbiddenError("You don't have necessary permissions");
 
-    if (blog.isPublished) {
-      blog.isDraft = false;
+    if (post.isPublished) {
+      post.isDraft = false;
       // revert to the original state
-      blog.draftText = blog.text;
+      post.draftText = post.text;
     } else {
-      blog.status = false;
+      post.status = false;
     }
 
-    await BlogRepo.update(blog);
-    return new SuccessMsgResponse('Blog deleted successfully').send(res);
+    await PostRepo.update(post);
+    return new SuccessMsgResponse('Post deleted successfully').send(res);
   }),
 );
 
 router.get(
   '/submitted/all',
   asyncHandler(async (req: ProtectedRequest, res) => {
-    const blogs = await BlogRepo.findAllSubmissionsForWriter(req.user);
-    return new SuccessResponse('success', blogs).send(res);
+    const posts = await PostRepo.findAllSubmissionsForWriter(req.user);
+    return new SuccessResponse('success', posts).send(res);
   }),
 );
 
 router.get(
   '/published/all',
   asyncHandler(async (req: ProtectedRequest, res) => {
-    const blogs = await BlogRepo.findAllPublishedForWriter(req.user);
-    return new SuccessResponse('success', blogs).send(res);
+    const posts = await PostRepo.findAllPublishedForWriter(req.user);
+    return new SuccessResponse('success', posts).send(res);
   }),
 );
 
 router.get(
   '/drafts/all',
   asyncHandler(async (req: ProtectedRequest, res) => {
-    const blogs = await BlogRepo.findAllDraftsForWriter(req.user);
-    return new SuccessResponse('success', blogs).send(res);
+    const posts = await PostRepo.findAllDraftsForWriter(req.user);
+    return new SuccessResponse('success', posts).send(res);
   }),
 );
 
@@ -161,11 +161,11 @@ router.get(
   '/id/:id',
   validator(schema.postId, ValidationSource.PARAM),
   asyncHandler(async (req: ProtectedRequest, res) => {
-    const blog = await BlogRepo.findPostAllDataById(new Types.ObjectId(req.params.id));
-    if (!blog) throw new BadRequestError('Blog does not exists');
-    if (!blog.author._id.equals(req.user._id))
+    const post = await PostRepo.findPostAllDataById(new Types.ObjectId(req.params.id));
+    if (!post) throw new BadRequestError('Post does not exists');
+    if (!post.author._id.equals(req.user._id))
       throw new ForbiddenError("You don't have necessary permissions");
-    new SuccessResponse('success', blog).send(res);
+    new SuccessResponse('success', post).send(res);
   }),
 );
 

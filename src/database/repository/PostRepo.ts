@@ -1,4 +1,4 @@
-import Post, { PostModel } from '../model/Blog';
+import Post, { PostModel } from '../model/Post';
 import { Types } from 'mongoose';
 import User from '../model/User';
 
@@ -13,7 +13,7 @@ export default class PostRepo {
     post.createdAt = now;
     post.updatedAt = now;
     const createdPost = await PostModel.create(post);
-    return createdPost.toObject();
+    return createdPost;
   }
 
   public static update(post: Post): Promise<any> {
@@ -76,7 +76,7 @@ export default class PostRepo {
       .limit(limit)
       .populate('author', this.AUTHOR_DETAIL)
       .sort({ updatedAt: -1 })
-      .lean<Post>()
+      .lean<Post[]>()
       .exec();
   }
 
@@ -84,42 +84,42 @@ export default class PostRepo {
     return PostModel.find({ author: user, status: true, isPublished: true })
       .populate('author', this.AUTHOR_DETAIL)
       .sort({ updatedAt: -1 })
-      .lean<Post>()
+      .lean<Post[]>()
       .exec();
   }
 
   public static findAllDrafts(): Promise<Post[]> {
-    return this.findDetailedBlogs({ isDraft: true, status: true });
+    return this.findDetailedPosts({ isDraft: true, status: true });
   }
 
   public static findAllSubmissions(): Promise<Post[]> {
-    return this.findDetailedBlogs({ isSubmitted: true, status: true });
+    return this.findDetailedPosts({ isSubmitted: true, status: true });
   }
 
   public static findAllPublished(): Promise<Post[]> {
-    return this.findDetailedBlogs({ isPublished: true, status: true });
+    return this.findDetailedPosts({ isPublished: true, status: true });
   }
 
   public static findAllSubmissionsForWriter(user: User): Promise<Post[]> {
-    return this.findDetailedBlogs({ author: user, status: true, isSubmitted: true });
+    return this.findDetailedPosts({ author: user, status: true, isSubmitted: true });
   }
 
   public static findAllPublishedForWriter(user: User): Promise<Post[]> {
-    return this.findDetailedBlogs({ author: user, status: true, isPublished: true });
+    return this.findDetailedPosts({ author: user, status: true, isPublished: true });
   }
 
   public static findAllDraftsForWriter(user: User): Promise<Post[]> {
-    return this.findDetailedBlogs({ author: user, status: true, isDraft: true });
+    return this.findDetailedPosts({ author: user, status: true, isDraft: true });
   }
 
-  private static findDetailedBlogs(query: Record<string, unknown>): Promise<Post[]> {
+  private static findDetailedPosts(query: Record<string, unknown>): Promise<Post[]> {
     return PostModel.find(query)
       .select(this.POST_INFO_ADDITIONAL)
       .populate('author', this.AUTHOR_DETAIL)
       .populate('createdBy', this.AUTHOR_DETAIL)
       .populate('updatedBy', this.AUTHOR_DETAIL)
       .sort({ updatedAt: -1 })
-      .lean<Post>()
+      .lean<Post[]>()
       .exec();
   }
 
@@ -129,7 +129,7 @@ export default class PostRepo {
       .limit(limit)
       .populate('author', this.AUTHOR_DETAIL)
       .sort({ publishedAt: -1 })
-      .lean<Post>()
+      .lean<Post[]>()
       .exec();
   }
 
@@ -149,7 +149,7 @@ export default class PostRepo {
       .sort({ updatedAt: -1 })
       .limit(limit)
       .sort({ similarity: { $meta: 'textScore' } })
-      .lean<Post>()
+      .lean<Post[]>()
       .exec();
   }
 
@@ -167,7 +167,7 @@ export default class PostRepo {
       .select('-status -description')
       .limit(limit)
       .sort({ similarity: { $meta: 'textScore' } })
-      .lean<Post>()
+      .lean<Post[]>()
       .exec();
   }
 
@@ -180,7 +180,7 @@ export default class PostRepo {
       .select('-status -description')
       .limit(limit)
       .sort({ score: -1 })
-      .lean<Post>()
+      .lean<Post[]>()
       .exec();
   }
 }

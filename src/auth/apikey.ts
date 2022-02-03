@@ -13,7 +13,7 @@ export default router.use(
   validator(schema.apiKey, ValidationSource.HEADER),
   asyncHandler(async (req: PublicRequest, res, next) => {
     // @ts-ignore
-    req.apiKey = req.headers['x-api-key'].toString();
+    req.apiKey = req.headers['x-api-key'] ? req.headers['x-api-key'].toString() : '';
 
     const apiKey = await ApiKeyRepo.findByKey(req.apiKey);
     Logger.info(apiKey);

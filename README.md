@@ -47,13 +47,13 @@
 │   │   ├── index.ts
 │   │   ├── model
 │   │   │   ├── ApiKey.ts
-│   │   │   ├── Blog.ts
+│   │   │   ├── Post.ts
 │   │   │   ├── Keystore.ts
 │   │   │   ├── Role.ts
 │   │   │   └── User.ts
 │   │   └── repository
 │   │       ├── ApiKeyRepo.ts
-│   │       ├── BlogRepo.ts
+│   │       ├── PostRepo.ts
 │   │       ├── KeystoreRepo.ts
 │   │       ├── RoleRepo.ts
 │   │       └── UserRepo.ts
@@ -69,9 +69,9 @@
 │   │       │   ├── schema.ts
 │   │       │   ├── signup.ts
 │   │       │   └── token.ts
-│   │       ├── blog
-│   │       │   ├── blogDetail.ts
-│   │       │   ├── blogList.ts
+│   │       ├── post
+│   │       │   ├── postDetail.ts
+│   │       │   ├── postList.ts
 │   │       │   ├── editor.ts
 │   │       │   ├── schema.ts
 │   │       │   └── writer.ts
@@ -101,8 +101,8 @@
 │   │       └── unit.test.ts
 │   ├── routes
 │   │   └── v1
-│   │       ├── blog
-│   │       │   ├── blogDetail
+│   │       ├── post
+│   │       │   ├── postDetail
 │   │       │   │   ├── mock.ts
 │   │       │   │   └── unit.test.ts
 │   │       │   └── writer

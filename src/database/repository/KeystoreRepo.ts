@@ -38,6 +38,6 @@ export default class KeystoreRepo {
       createdAt: now,
       updatedAt: now,
     } as Keystore);
-    return keystore.toObject();
+    return keystore;
   }
 }

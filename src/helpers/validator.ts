@@ -30,22 +30,21 @@ export const JoiAuthBearer = () =>
     return value;
   }, 'Authorization Header Validation');
 
-export default (schema: Joi.ObjectSchema, source: ValidationSource = ValidationSource.BODY) => (
-  req: Request,
-  res: Response,
-  next: NextFunction,
-) => {
-  try {
-    const { error } = schema.validate(req[source]);
+export default (schema: Joi.ObjectSchema, source: ValidationSource = ValidationSource.BODY) =>
+  (req: Request, res: Response, next: NextFunction) => {
+    console.log('Validating request body', req.body);
+    try {
+      const { error } = schema.validate(req[source]);
+      if (!error) return next();
 
-    if (!error) return next();
+      const { details } = error;
+      const message = details.map((i) => i.message.replace(/['"]+/g, '')).join(',');
+      Logger.error(message);
+      console.log('Sucess: ', message);
 
-    const { details } = error;
-    const message = details.map((i) => i.message.replace(/['"]+/g, '')).join(',');
-    Logger.error(message);
-
-    next(new BadRequestError(message));
-  } catch (error) {
-    next(error);
-  }
-};
+      next(new BadRequestError(message));
+    } catch (error) {
+      console.log('Error', error);
+      next(error);
+    }
+  };

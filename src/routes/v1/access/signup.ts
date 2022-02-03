@@ -16,11 +16,14 @@ import { RoleCode } from '../../../database/model/Role';
 const router = express.Router();
 
 router.post(
-  '/basic',
-  validator(schema.signup),
+  '/',
+  // validator(schema.signup),
   asyncHandler(async (req: RoleRequest, res) => {
+    console.log('Signup basic');
     const user = await UserRepo.findByEmail(req.body.email);
     if (user) throw new BadRequestError('User already registered');
+
+    console.log('SignUp request', req.body);
 
     const accessTokenKey = crypto.randomBytes(64).toString('hex');
     const refreshTokenKey = crypto.randomBytes(64).toString('hex');
