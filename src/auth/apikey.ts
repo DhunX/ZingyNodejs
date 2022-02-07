@@ -16,7 +16,7 @@ export default router.use(
     req.apiKey = req.headers['x-api-key'] ? req.headers['x-api-key'].toString() : '';
 
     const apiKey = await ApiKeyRepo.findByKey(req.apiKey);
-    Logger.info(apiKey);
+    console.log(apiKey);
 
     if (!apiKey) throw new ForbiddenError();
     return next();

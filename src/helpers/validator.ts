@@ -39,7 +39,7 @@ export default (schema: Joi.ObjectSchema, source: ValidationSource = ValidationS
 
       const { details } = error;
       const message = details.map((i) => i.message.replace(/['"]+/g, '')).join(',');
-      Logger.error(message);
+      console.log(message);
       console.log('Sucess: ', message);
 
       next(new BadRequestError(message));
