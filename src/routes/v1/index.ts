@@ -9,7 +9,7 @@ import postDetail from './post/postDetail';
 import writer from './post/writer';
 import editor from './post/editor';
 import user from './profile/user';
-
+import {getAllUsers} from './info/users';
 const router = express.Router();
 
 /*-------------------------------------------------------------------------*/
@@ -26,5 +26,5 @@ router.use('/post', postDetail);
 router.use('/writer/post', writer);
 router.use('/editor/post', editor);
 router.use('/profile', user);
-
+router.use('/info/users',getAllUsers);
 export default router;
