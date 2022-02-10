@@ -17,13 +17,10 @@ const router = express.Router();
 
 router.post(
   '/',
-  // validator(schema.signup),
+  validator(schema.signup),
   asyncHandler(async (req: RoleRequest, res) => {
-    console.log('Signup basic');
     const user = await UserRepo.findByEmail(req.body.email);
     if (user) throw new BadRequestError('User already registered');
-
-    console.log('SignUp request', req.body);
 
     const accessTokenKey = crypto.randomBytes(64).toString('hex');
     const refreshTokenKey = crypto.randomBytes(64).toString('hex');
@@ -41,11 +38,15 @@ router.post(
       RoleCode.LEARNER,
     );
 
-    const tokens = await createTokens(createdUser, keystore.primaryKey, keystore.secondaryKey);
-    new SuccessResponse('Signup Successful', {
-      user: _.pick(createdUser, ['_id', 'name', 'email', 'roles', 'profilePicUrl']),
-      tokens: tokens,
-    }).send(res);
+    try {
+      const tokens = await createTokens(createdUser, keystore.primaryKey, keystore.secondaryKey);
+      new SuccessResponse('Signup Successful', {
+        user: _.pick(createdUser, ['_id', 'name', 'email', 'roles', 'profilePicUrl']),
+        tokens: tokens,
+      }).send(res);
+    } catch (error) {
+      console.log('Error:', error);
+    }
   }),
 );
 
