@@ -22,9 +22,28 @@ export const getAllUsers = router.get('/', async(req,res,next)=>{
             err:error
         })
    }
+}
+)
+
+export const individualUser = router.get('/:id', async(req,res,next)=>{
+     
+    try {
+        const response=await UserModel.findById(req.params.id);
+        res.status(200).json({
+            data:response
+        });
+       } catch (error) {
+           
+            res.status(500).json({
+                err:error
+            })
+       }
+    
+    
+   }
    
 
-}
+
     
 );
 

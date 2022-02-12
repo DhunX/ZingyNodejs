@@ -10,6 +10,8 @@ import writer from './post/writer';
 import editor from './post/editor';
 import user from './profile/user';
 import {getAllUsers} from './info/users';
+import { individualUser } from './info/users';
+import { deleteUser } from './access/deleteUser';
 const router = express.Router();
 
 /*-------------------------------------------------------------------------*/
@@ -27,4 +29,7 @@ router.use('/writer/post', writer);
 router.use('/editor/post', editor);
 router.use('/profile', user);
 router.use('/info/users',getAllUsers);
+router.use('/info/user',individualUser);
+router.use('/user/delete',deleteUser)
+
 export default router;
