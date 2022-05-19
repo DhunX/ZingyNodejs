@@ -5,12 +5,18 @@ export const DOCUMENT_NAME = 'User';
 export const COLLECTION_NAME = 'users';
 
 export default interface User extends Document {
+  username?: string;
   name: string;
   email?: string;
+  bio?: string;
+  followers: string[];
+  following: string[];
+  dob?: Date;
   password?: string;
   profilePicUrl?: string;
   roles: Role[];
   verified?: boolean;
+  isCreator?: boolean;
   status?: boolean;
   createdAt?: Date;
   updatedAt?: Date;
@@ -24,12 +30,23 @@ const schema = new Schema(
       trim: true,
       maxlength: 100,
     },
+    username: {
+      type: Schema.Types.String,
+      required: false,
+      trim: true,
+      maxlength: 20,
+    },
     email: {
       type: Schema.Types.String,
       required: true,
       unique: true,
       trim: true,
       select: false,
+    },
+    dob: {
+      type: Schema.Types.Date,
+      required: false,
+      unique: false,
     },
     password: {
       type: Schema.Types.String,
@@ -38,6 +55,41 @@ const schema = new Schema(
     profilePicUrl: {
       type: Schema.Types.String,
       trim: true,
+    },
+    bio: {
+      type: Schema.Types.String,
+      trim: true,
+      maxlength: 500,
+    },
+    followers: {
+      type: {
+        count: {
+          type: Schema.Types.Number,
+          default: 0,
+          nullable: false,
+        },
+        users: [
+          {
+            type: Schema.Types.ObjectId,
+            ref: 'User',
+          },
+        ],
+      },
+    },
+    followings: {
+      type: {
+        count: {
+          type: Schema.Types.Number,
+          default: 0,
+          nullable: false,
+        },
+        users: [
+          {
+            type: Schema.Types.ObjectId,
+            ref: 'User',
+          },
+        ],
+      },
     },
     roles: {
       type: [
@@ -50,6 +102,10 @@ const schema = new Schema(
       select: false,
     },
     verified: {
+      type: Schema.Types.Boolean,
+      default: false,
+    },
+    isCreator: {
       type: Schema.Types.Boolean,
       default: false,
     },

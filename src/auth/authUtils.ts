@@ -12,17 +12,16 @@ export const getAccessToken = (authorization?: string) => {
 };
 
 export const validateTokenData = (payload: JwtPayload): boolean => {
-  if (
-    !payload ||
-    !payload.iss ||
-    !payload.sub ||
-    !payload.aud ||
-    !payload.prm ||
-    payload.iss !== tokenInfo.issuer ||
-    payload.aud !== tokenInfo.audience ||
-    !Types.ObjectId.isValid(payload.sub)
-  )
-    throw new AuthFailureError('Invalid Access Token');
+  if (!payload) throw new AuthFailureError('Invalid Access Token!! - PL');
+  if (!payload.iss) throw new AuthFailureError('Invalid Access Token!! - ISS');
+  if (!payload.sub) throw new AuthFailureError('Invalid Access Token!! - SUB');
+  if (!payload.aud) throw new AuthFailureError('Invalid Access Token!! - AUD');
+  if (!payload.prm) throw new AuthFailureError('Invalid Access Token!! - PRM');
+  if (payload.iss !== tokenInfo.issuer) throw new AuthFailureError('Invalid Access Token!! - !ISS');
+  if (payload.aud !== tokenInfo.audience)
+    throw new AuthFailureError('Invalid Access Token!! - !AUD');
+  if (!Types.ObjectId.isValid(payload.sub))
+    throw new AuthFailureError('Invalid Access Token!! - !SUB');
   return true;
 };
 

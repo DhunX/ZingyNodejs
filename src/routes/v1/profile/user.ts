@@ -47,6 +47,11 @@ router.put(
 
     if (req.body.name) user.name = req.body.name;
     if (req.body.profilePicUrl) user.profilePicUrl = req.body.profilePicUrl;
+    if (req.body.bio) user.bio = req.body.bio;
+    if (req.body.username) user.username = req.body.username;
+    if (req.body.isCreator) user.isCreator = req.body.isCreator;
+    if (req.body.dob) user.dob = req.body.dob;
+    if (req.body.profilePicUrl) user.profilePicUrl = req.body.profilePicUrl;
 
     await UserRepo.updateInfo(user);
     return new SuccessResponse(
