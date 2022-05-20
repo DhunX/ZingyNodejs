@@ -1,31 +1,28 @@
 import express from 'express';
 
-import User, {UserModel} from '../../../database/model/User';
+import User, { UserModel } from '../../../database/model/User';
 
 const router = express.Router();
 
-const fetchAllUsers = async () => {
-    return await UserModel.find();
-}
-
-export const getAllUsers = router.get('/', async(req,res,next)=>{
-    const data = req.params;
-    console.log(data)
-   try {
-    const response=await UserModel.find();
+export const getAllUsers = router.get('/', async (req, res, next) => {
+  const data = req.query;
+  if (data.username && typeof data.username === 'string') {
+    const q = data?.username;
+    const user = await UserModel.findOne({ username: q });
+    if (user) {
+      return res.status(200).json({ status: 200, message: 'User found', data: user });
+    }
+    return res.status(404).json({ message: 'User not found', status: 404 });
+  }
+  try {
+    const response = await UserModel.find();
     res.status(200).json({
-        data:response
+      data: response,
     });
-   } catch (error) {
-       console.log(error);
-        res.status(500).json({
-            err:error
-        })
-   }
-   
-
-}
-    
-);
-
-
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({
+      err: error,
+    });
+  }
+});

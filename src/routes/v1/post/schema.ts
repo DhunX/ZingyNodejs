@@ -36,4 +36,8 @@ export default {
     score: Joi.number().optional().min(0).max(1),
     tags: Joi.array().optional().min(1).items(Joi.string().uppercase()),
   }),
+  postType: Joi.object().keys({
+    id: Joi.number().required(),
+    name: Joi.string().required().min(3).max(50),
+  }),
 };

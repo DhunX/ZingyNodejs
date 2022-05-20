@@ -49,6 +49,15 @@ router.put(
     if (req.body.profilePicUrl) user.profilePicUrl = req.body.profilePicUrl;
     if (req.body.bio) user.bio = req.body.bio;
     if (req.body.username) user.username = req.body.username;
+
+    if (req.body.username) {
+      const temp = await UserRepo.findByUserName(req.body.username);
+      if (temp) {
+        console.log('username already exists');
+        throw new BadRequestError('Username already taken');
+      }
+    }
+
     if (req.body.isCreator) user.isCreator = req.body.isCreator;
     if (req.body.dob) user.dob = req.body.dob;
     if (req.body.profilePicUrl) user.profilePicUrl = req.body.profilePicUrl;
