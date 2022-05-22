@@ -1,8 +1,11 @@
 import express from 'express';
+import authentication from '../../../auth/authentication';
 
 import User, { UserModel } from '../../../database/model/User';
 
 const router = express.Router();
+
+router.use('/', authentication);
 
 export const getAllUsers = router.get('/', async (req, res, next) => {
   const data = req.query;
