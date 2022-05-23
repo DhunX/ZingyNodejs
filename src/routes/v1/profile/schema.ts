@@ -11,6 +11,8 @@ export default {
     bio: Joi.string().optional().min(0).max(500),
     username: Joi.string().optional().min(5).max(20),
     dob: Joi.date().optional(),
+    interests: Joi.array().optional().items(Joi.string().min(1).max(40)),
+    genere: Joi.array().optional().items(Joi.string().min(1).max(40)),
     followers: Joi.object().keys({
       count: Joi.number().min(0).default(0),
       list: Joi.array().items(Joi.string()),

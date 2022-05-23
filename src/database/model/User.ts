@@ -20,6 +20,8 @@ export default interface User extends Document {
   status?: boolean;
   createdAt?: Date;
   updatedAt?: Date;
+  interests?: string[];
+  genere?: string[];
 }
 
 const schema = new Schema(
@@ -60,6 +62,12 @@ const schema = new Schema(
       type: Schema.Types.String,
       trim: true,
       maxlength: 500,
+    },
+    interests: {
+      type: [{ type: Schema.Types.String, trim: true, maxlength: 40, required: false }],
+    },
+    genere: {
+      type: [{ type: Schema.Types.String, trim: true, maxlength: 40, required: false }],
     },
     followers: {
       type: {

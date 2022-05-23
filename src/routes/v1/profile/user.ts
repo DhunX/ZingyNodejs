@@ -32,9 +32,7 @@ router.get(
   asyncHandler(async (req: ProtectedRequest, res) => {
     const user = await UserRepo.findProfileById(req.user._id);
     if (!user) throw new BadRequestError('User not registered');
-    return new SuccessResponse('success', _.pick(user, ['name', 'profilePicUrl', 'roles'])).send(
-      res,
-    );
+    return new SuccessResponse('success', user).send(res);
   }),
 );
 
@@ -49,6 +47,8 @@ router.put(
     if (req.body.profilePicUrl) user.profilePicUrl = req.body.profilePicUrl;
     if (req.body.bio) user.bio = req.body.bio;
     if (req.body.username) user.username = req.body.username;
+    if (req.body.genere) user.genere = req.body.genere;
+    if (req.body.interests) user.interests = req.body.interests;
 
     if (req.body.username) {
       const temp = await UserRepo.findByUserName(req.body.username);
