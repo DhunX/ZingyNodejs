@@ -39,6 +39,28 @@ export default class UserRepo {
       .lean<User>()
       .exec();
   }
+  public static findByUsername(username: string): Promise<User | null> {
+    return UserModel.findOne({ username: username, status: true })
+      .select('+username +password +roles')
+      .populate({
+        path: 'roles',
+        match: { status: true },
+        select: { code: 1 },
+      })
+      .lean<User>()
+      .exec();
+  }
+  public static findByPhoneNumber(number: string): Promise<User | null> {
+    return UserModel.findOne({ number: number, status: true })
+      .select('+phoneNumber +password +roles')
+      .populate({
+        path: 'roles',
+        match: { status: true },
+        select: { code: 1 },
+      })
+      .lean<User>()
+      .exec();
+  }
 
   public static findProfileById(id: Types.ObjectId): Promise<User | null> {
     return UserModel.findOne({ _id: id, status: true })

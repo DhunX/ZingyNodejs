@@ -1,7 +1,7 @@
 import express from 'express';
 import apikey from '../../auth/apikey';
 import signup from './access/signup';
-import login from './access/login';
+import { loginEmail, loginUsername, loginPhone } from './access/login';
 import logout from './access/logout';
 import token from './access/token';
 import { sendOTP, resendOTP, verifyOTP, test } from './access/msg91';
@@ -20,7 +20,9 @@ router.use('/', apikey);
 /*-------------------------------------------------------------------------*/
 
 router.use('/signup', signup);
-router.use('/login', login);
+router.use('/login/email', loginEmail);
+router.use('/login/phone', loginPhone);
+router.use('/login/username', loginUsername);
 router.use('/logout', logout);
 router.use('/token', token);
 router.use('/otp/send', sendOTP);

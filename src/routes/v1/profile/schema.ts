@@ -8,6 +8,8 @@ export default {
   profile: Joi.object().keys({
     name: Joi.string().optional().min(1).max(200),
     profilePicUrl: Joi.string().optional().uri(),
+    phoneNumber: Joi.string().optional().length(10),
+    email: Joi.string().optional().email(),
     bio: Joi.string().optional().min(0).max(500),
     username: Joi.string().optional().min(5).max(20),
     dob: Joi.date().optional(),

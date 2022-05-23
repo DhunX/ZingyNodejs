@@ -8,6 +8,7 @@ export default interface User extends Document {
   username?: string;
   name: string;
   email?: string;
+  phoneNumber?: string;
   bio?: string;
   followers: string[];
   following: string[];
@@ -44,6 +45,14 @@ const schema = new Schema(
       unique: true,
       trim: true,
       select: false,
+    },
+    phoneNumber: {
+      type: Schema.Types.String,
+      required: false,
+      unique: true,
+      trim: true,
+      select: false,
+      length: 10,
     },
     dob: {
       type: Schema.Types.Date,
