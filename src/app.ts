@@ -20,7 +20,7 @@ app.use(cors({ origin: corsUrl, optionsSuccessStatus: 200 }));
 // Routes
 app.use('/v1', routesV1);
 app.get('/', (req: Request, res: Response, next: NextFunction) => {
-  res.send('Hello Zingy! - 21/05/2022');
+  res.send('Hello Zingy! - 24/05/2022');
 });
 
 // catch 404 and forward to error handler
