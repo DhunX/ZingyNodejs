@@ -93,6 +93,11 @@ export default class UserRepo {
     if (!role) throw new InternalError('Role must be defined');
 
     user.roles = [role._id];
+    user.followers = { count: 0, users: [] };
+    user.following = { count: 0, users: [] };
+    user.status = true;
+    user.tracks = [];
+    user.posts = [];
     user.createdAt = user.updatedAt = now;
     const createdUser = await UserModel.create(user);
     const keystore = await KeystoreRepo.create(createdUser._id, accessTokenKey, refreshTokenKey);

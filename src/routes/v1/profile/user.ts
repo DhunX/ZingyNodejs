@@ -18,7 +18,15 @@ router.get(
   asyncHandler(async (req: ProtectedRequest, res) => {
     const user = await UserRepo.findPublicProfileById(new Types.ObjectId(req.params.id));
     if (!user) throw new BadRequestError('User not registered');
-    return new SuccessResponse('success', _.pick(user, ['name', 'profilePicUrl'])).send(res);
+    return new SuccessResponse('success', _.omit(user, 'password')).send(res);
+  }),
+);
+router.get(
+  '/public/username/:username',
+  asyncHandler(async (req: ProtectedRequest, res) => {
+    const user = await UserRepo.findByUserName(req.params.username);
+    if (!user) throw new BadRequestError('User not registered');
+    return new SuccessResponse('success', _.omit(user, 'password')).send(res);
   }),
 );
 
@@ -49,6 +57,11 @@ router.put(
     if (req.body.username) user.username = req.body.username;
     if (req.body.genere) user.genere = req.body.genere;
     if (req.body.interests) user.interests = req.body.interests;
+    if (req.body.location) user.location = req.body.location;
+    if (req.body.followers) user.followers = req.body.followers;
+    if (req.body.following) user.following = req.body.following;
+    if (req.body.tracks) user.tracks = req.body.tracks;
+    if (req.body.posts) user.posts = req.body.posts;
 
     if (req.body.username) {
       const temp = await UserRepo.findByUserName(req.body.username);

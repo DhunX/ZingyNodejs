@@ -9,9 +9,12 @@ export default interface User extends Document {
   name: string;
   email?: string;
   phoneNumber?: string;
+  location?: string;
   bio?: string;
-  followers: string[];
-  following: string[];
+  followers?: { count: number; users: string[] };
+  following?: { count: number; users: string[] };
+  tracks?: string[];
+  posts?: string[];
   dob?: Date;
   password?: string;
   profilePicUrl?: string;
@@ -38,6 +41,13 @@ const schema = new Schema(
       required: false,
       trim: true,
       maxlength: 20,
+      unique: true,
+    },
+    location: {
+      type: Schema.Types.String,
+      required: false,
+      trim: true,
+      maxlength: 40,
     },
     email: {
       type: Schema.Types.String,
@@ -78,6 +88,12 @@ const schema = new Schema(
     genere: {
       type: [{ type: Schema.Types.String, trim: true, maxlength: 40, required: false }],
     },
+    tracks: {
+      type: [{ type: Schema.Types.ObjectId, ref: 'Track', required: false }],
+    },
+    posts: {
+      type: [{ type: Schema.Types.ObjectId, ref: 'Post', required: false }],
+    },
     followers: {
       type: {
         count: {
@@ -93,7 +109,7 @@ const schema = new Schema(
         ],
       },
     },
-    followings: {
+    following: {
       type: {
         count: {
           type: Schema.Types.Number,
