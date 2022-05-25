@@ -1,18 +1,19 @@
 import { Schema, model, Document } from 'mongoose';
+import { POST_TYPES } from '../../constants';
 import User from './User';
+import Comment from './Comment';
 
 export const DOCUMENT_NAME = 'Post';
 export const COLLECTION_NAME = 'posts';
 
 export default interface Post extends Document {
-  title: string;
   description: string;
-  text?: string;
-  draftText?: string;
   tags: string[];
   author: User;
   imgUrl?: string;
   postUrl: string;
+  audioUrl?: string;
+  vdoUrl?: string;
   likes?: number;
   score: number;
   isSubmitted: boolean;
@@ -24,31 +25,17 @@ export default interface Post extends Document {
   updatedBy?: User;
   createdAt?: Date;
   updatedAt?: Date;
+  type: string;
+  comments?: Comment[];
 }
 
 const schema = new Schema(
   {
-    title: {
-      type: Schema.Types.String,
-      required: true,
-      maxlength: 500,
-      trim: true,
-    },
     description: {
       type: Schema.Types.String,
       required: true,
       maxlength: 2000,
       trim: true,
-    },
-    text: {
-      type: Schema.Types.String,
-      required: false,
-      select: false,
-    },
-    draftText: {
-      type: Schema.Types.String,
-      required: true,
-      select: false,
     },
     tags: [
       {
@@ -63,17 +50,29 @@ const schema = new Schema(
       required: true,
       index: true,
     },
+    postUrl: {
+      type: Schema.Types.String,
+      required: true,
+      unique: true,
+      maxlength: 200,
+      trim: true,
+    },
     imgUrl: {
       type: Schema.Types.String,
       required: false,
       maxlength: 500,
       trim: true,
     },
-    postUrl: {
+    audioUrl: {
       type: Schema.Types.String,
-      required: true,
-      unique: true,
-      maxlength: 200,
+      required: false,
+      maxlength: 500,
+      trim: true,
+    },
+    vdoUrl: {
+      type: Schema.Types.String,
+      required: false,
+      maxlength: 500,
       trim: true,
     },
     likes: {
@@ -137,13 +136,30 @@ const schema = new Schema(
       required: true,
       select: false,
     },
+    type: {
+      type: Schema.Types.String,
+      required: true,
+      enum: [
+        POST_TYPES.AUDIO_POST,
+        POST_TYPES.VIDEO_POST,
+        POST_TYPES.IMAGE_POST,
+        POST_TYPES.TEXT_POST,
+        POST_TYPES.JOB_POST,
+        POST_TYPES.HIRE_ME_POST,
+        POST_TYPES.COLLAB_POST,
+        POST_TYPES.EVENT_POST,
+      ],
+    },
+    comments: [
+      {
+        type: Schema.Types.ObjectId,
+        ref: 'Comment',
+      },
+    ],
   },
   {
     versionKey: false,
   },
-).index(
-  { title: 'text', description: 'text' },
-  { weights: { title: 3, description: 1 }, background: false },
 );
 
 export const PostModel = model<Post>(DOCUMENT_NAME, schema, COLLECTION_NAME);

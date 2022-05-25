@@ -10,10 +10,10 @@ import asyncHandler from '../../../helpers/asyncHandler';
 const router = express.Router();
 
 router.get(
-  '/url',
-  validator(schema.postUrl, ValidationSource.QUERY),
+  '/url/:id',
+  validator(schema.postId, ValidationSource.QUERY),
   asyncHandler(async (req, res) => {
-    const post = await PostRepo.findByUrl(req.query.endpoint as string);
+    const post = await PostRepo.findById(req.params.id as string);
     if (!post) throw new BadRequestError('Post do not exists');
     new SuccessResponse('success', post).send(res);
   }),

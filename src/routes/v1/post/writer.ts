@@ -20,29 +20,28 @@ const router = express.Router();
 router.use('/', authentication, role(RoleCode.WRITER), authorization);
 /*-------------------------------------------------------------------------*/
 
-const formatEndpoint = (endpoint: string) => endpoint.replace(/\s/g, '').replace(/\//g, '-');
-
 router.post(
   '/',
   validator(schema.postCreate),
   asyncHandler(async (req: ProtectedRequest, res) => {
-    req.body.postUrl = formatEndpoint(req.body.postUrl);
-
     const post = await PostRepo.findUrlIfExists(req.body.postUrl);
     if (post) throw new BadRequestError('Post with this url already exists');
 
+    console.log('In req.body');
     const createdPost = await PostRepo.create({
-      title: req.body.title,
-      description: req.body.description,
-      draftText: req.body.text,
-      tags: req.body.tags,
+      description: req.body?.description,
+      tags: req.body?.tags,
       author: req.user,
-      postUrl: req.body.postUrl,
-      imgUrl: req.body.imgUrl,
-      score: req.body.score,
+      imgUrl: req.body?.imgUrl,
+      audioUrl: req.body?.audioUrl,
+      vdoUrl: req.body?.vdoUrl,
+      score: req.body?.score,
       createdBy: req.user,
       updatedBy: req.user,
-    } as Post);
+      type: req.body.type,
+      comments: [],
+      postUrl: req.body.postUrl,
+    } as unknown as Post);
 
     new SuccessResponse('Post created successfully', createdPost).send(res);
   }),
@@ -58,18 +57,11 @@ router.put(
     if (!post.author._id.equals(req.user._id))
       throw new ForbiddenError("You don't have necessary permissions");
 
-    if (req.body.postUrl) {
-      const endpoint = formatEndpoint(req.body.postUrl);
-      const existingPost = await PostRepo.findUrlIfExists(endpoint);
-      if (existingPost) throw new BadRequestError('Post URL already used');
-      if (req.body.postUrl) post.postUrl = endpoint;
-    }
-
-    if (req.body.title) post.title = req.body.title;
     if (req.body.description) post.description = req.body.description;
-    if (req.body.text) post.draftText = req.body.text;
     if (req.body.tags) post.tags = req.body.tags;
     if (req.body.imgUrl) post.imgUrl = req.body.imgUrl;
+    if (req.body.audioUrl) post.audioUrl = req.body.audioUrl;
+    if (req.body.vdoUrl) post.vdoUrl = req.body.vdoUrl;
     if (req.body.score) post.score = req.body.score;
 
     await PostRepo.update(post);
@@ -123,7 +115,6 @@ router.delete(
     if (post.isPublished) {
       post.isDraft = false;
       // revert to the original state
-      post.draftText = post.text;
     } else {
       post.status = false;
     }

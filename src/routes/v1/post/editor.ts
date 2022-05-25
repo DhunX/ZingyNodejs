@@ -29,7 +29,6 @@ router.put(
     post.isDraft = false;
     post.isSubmitted = false;
     post.isPublished = true;
-    post.text = post.draftText;
     if (!post.publishedAt) post.publishedAt = new Date();
 
     await PostRepo.update(post);

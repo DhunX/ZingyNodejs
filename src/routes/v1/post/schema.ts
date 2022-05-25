@@ -1,10 +1,7 @@
 import Joi from '@hapi/joi';
-import { JoiObjectId, JoiUrlEndpoint } from '../../../helpers/validator';
+import { JoiObjectId } from '../../../helpers/validator';
 
 export default {
-  postUrl: Joi.object().keys({
-    endpoint: JoiUrlEndpoint().required().max(200),
-  }),
   postId: Joi.object().keys({
     id: JoiObjectId().required(),
   }),
@@ -19,20 +16,21 @@ export default {
     id: JoiObjectId().required(),
   }),
   postCreate: Joi.object().keys({
-    title: Joi.string().required().min(3).max(500),
-    description: Joi.string().required().min(3).max(2000),
-    text: Joi.string().required().max(50000),
-    postUrl: JoiUrlEndpoint().required().max(200),
+    description: Joi.string().optional().min(3).max(2000),
+    postUrl: Joi.string().required().max(200),
     imgUrl: Joi.string().optional().uri().max(200),
+    vdoUrl: Joi.string().optional().uri().max(200),
+    audioUrl: Joi.string().optional().uri().max(200),
     score: Joi.number().optional().min(0).max(1),
-    tags: Joi.array().optional().min(1).items(Joi.string().uppercase()),
+    tags: Joi.array().optional().min(0).items(Joi.string().uppercase()),
+    type: Joi.string().required().min(1).uppercase(),
   }),
   postUpdate: Joi.object().keys({
-    title: Joi.string().optional().min(3).max(500),
     description: Joi.string().optional().min(3).max(2000),
-    text: Joi.string().optional().max(50000),
-    postUrl: JoiUrlEndpoint().optional().max(200),
     imgUrl: Joi.string().optional().uri().max(200),
+    audioUrl: Joi.string().optional().uri().max(200),
+    vdoUrl: Joi.string().optional().uri().max(200),
+    postUrl: Joi.string().optional().max(200),
     score: Joi.number().optional().min(0).max(1),
     tags: Joi.array().optional().min(1).items(Joi.string().uppercase()),
   }),

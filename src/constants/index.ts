@@ -1,0 +1,10 @@
+export const enum POST_TYPES {
+  AUDIO_POST = 'AUDIO',
+  VIDEO_POST = 'VIDEO',
+  IMAGE_POST = 'IMAGE',
+  TEXT_POST = 'TEXT',
+  JOB_POST = 'JOB',
+  HIRE_ME_POST = 'HIREME',
+  COLLAB_POST = 'COLLAB',
+  EVENT_POST = 'EVENT',
+}

@@ -3,10 +3,10 @@ import { Types } from 'mongoose';
 import User from '../model/User';
 
 export default class PostRepo {
-  private static AUTHOR_DETAIL = 'name profilePicUrl';
+  private static AUTHOR_DETAIL = 'name profilePicUrl interests username';
   private static POST_INFO_ADDITIONAL = '+isSubmitted +isDraft +isPublished +createdBy +updatedBy';
   private static POST_ALL_DATA =
-    '+text +draftText +isSubmitted +isDraft +isPublished +status +createdBy +updatedBy';
+    '+text +isSubmitted +isDraft +isPublished +status +createdBy +updatedBy';
 
   public static async create(post: Post): Promise<Post> {
     const now = new Date();
@@ -40,7 +40,7 @@ export default class PostRepo {
 
   public static findInfoWithTextAndDraftTextById(id: Types.ObjectId): Promise<Post | null> {
     return PostModel.findOne({ _id: id, status: true })
-      .select('+text +draftText +isSubmitted +isDraft +isPublished +status')
+      .select('+text +isSubmitted +isDraft +isPublished +status')
       .populate('author', this.AUTHOR_DETAIL)
       .lean<Post>()
       .exec();
@@ -54,10 +54,10 @@ export default class PostRepo {
       .exec();
   }
 
-  public static findByUrl(postUrl: string): Promise<Post | null> {
-    return PostModel.findOne({ postUrl: postUrl, status: true })
-      .select('+text')
+  public static findById(id: string): Promise<Post | null> {
+    return PostModel.findOne({ _id: id })
       .populate('author', this.AUTHOR_DETAIL)
+      .populate('comments')
       .lean<Post>()
       .exec();
   }
@@ -136,7 +136,7 @@ export default class PostRepo {
   public static searchSimilarPosts(post: Post, limit: number): Promise<Post[]> {
     return PostModel.find(
       {
-        $text: { $search: post.title, $caseSensitive: false },
+        $text: { $search: post.description, $caseSensitive: false },
         status: true,
         isPublished: true,
         _id: { $ne: post._id },
