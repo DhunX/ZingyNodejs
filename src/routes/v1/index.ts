@@ -12,7 +12,7 @@ import editor from './post/editor';
 import user from './profile/user';
 import { getAllUsers } from './info/users';
 import { getCities } from './info/misc';
-import { enterEarlyAccess, getEarlyAccessList } from './misc/public';
+import { enterEarlyAccess, getEarlyAccessList, sendQuery } from './misc/public';
 const router = express.Router();
 
 /*-------------------------------------------------------------------------*/
@@ -37,6 +37,7 @@ router.use('/editor/post', editor);
 router.use('/profile', user);
 router.use('/info/users', getAllUsers);
 router.use('/info/cities', getCities);
-router.use('/misc/early-access-request', enterEarlyAccess);
-router.use('/misc/list-early-access-requests', getEarlyAccessList);
+router.use('/misc', enterEarlyAccess);
+router.use('/misc', getEarlyAccessList);
+router.use('/misc', sendQuery);
 export default router;
