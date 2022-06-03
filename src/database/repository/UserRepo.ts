@@ -22,7 +22,6 @@ export default class UserRepo {
       .select('+email +password +roles')
       .populate({
         path: 'roles',
-        match: { status: true },
       })
       .lean<User>()
       .exec();
@@ -31,17 +30,6 @@ export default class UserRepo {
   public static findByEmail(email: string): Promise<User | null> {
     return UserModel.findOne({ email: email, status: true })
       .select('+email +password +roles')
-      .populate({
-        path: 'roles',
-        match: { status: true },
-        select: { code: 1 },
-      })
-      .lean<User>()
-      .exec();
-  }
-  public static findByUsername(username: string): Promise<User | null> {
-    return UserModel.findOne({ username: username, status: true })
-      .select('+username +password +roles')
       .populate({
         path: 'roles',
         match: { status: true },

@@ -51,7 +51,7 @@ const schema = new Schema(
     },
     email: {
       type: Schema.Types.String,
-      required: true,
+      required: false,
       unique: true,
       trim: true,
       select: false,
