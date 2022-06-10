@@ -17,7 +17,6 @@ export default {
   }),
   postCreate: Joi.object().keys({
     description: Joi.string().optional().min(3).max(2000),
-    postUrl: Joi.string().required().max(200),
     imgUrl: Joi.string().optional().uri().max(200),
     vdoUrl: Joi.string().optional().uri().max(200),
     audioUrl: Joi.string().optional().uri().max(200),

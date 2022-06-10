@@ -129,12 +129,10 @@ const schema = new Schema(
     createdAt: {
       type: Date,
       required: true,
-      select: false,
     },
     updatedAt: {
       type: Date,
       required: true,
-      select: false,
     },
     type: {
       type: Schema.Types.String,

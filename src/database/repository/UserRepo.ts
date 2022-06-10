@@ -4,6 +4,7 @@ import { InternalError } from '../../core/ApiError';
 import { Types } from 'mongoose';
 import KeystoreRepo from './KeystoreRepo';
 import Keystore from '../model/Keystore';
+import Post from '../model/Post';
 
 export default class UserRepo {
   // contains critical information of the user
@@ -51,15 +52,19 @@ export default class UserRepo {
   }
 
   public static findProfileById(id: Types.ObjectId): Promise<User | null> {
-    return UserModel.findOne({ _id: id, status: true })
-      .select('+roles')
-      .populate({
-        path: 'roles',
-        match: { status: true },
-        select: { code: 1 },
-      })
-      .lean<User>()
-      .exec();
+    return (
+      UserModel.findOne({ _id: id, status: true })
+        .select('+roles')
+        .populate({
+          path: 'roles',
+          match: { status: true },
+          select: { code: 1 },
+        })
+        .populate('posts')
+        // .populate('tracks')
+        .lean<User>()
+        .exec()
+    );
   }
 
   public static findPublicProfileById(id: Types.ObjectId): Promise<User | null> {
@@ -103,6 +108,18 @@ export default class UserRepo {
       .exec();
     const keystore = await KeystoreRepo.create(user._id, accessTokenKey, refreshTokenKey);
     return { user: user, keystore: keystore };
+  }
+
+  public static async userAddPost(user: User, newPost: Post): Promise<{ message: string }> {
+    user.posts.push(newPost);
+    try {
+      await UserModel.updateOne({ _id: user._id }, { $set: { ...user } })
+        .lean()
+        .exec();
+      return { message: 'success' };
+    } catch (error) {
+      return { message: 'error' };
+    }
   }
 
   public static updateInfo(user: User): Promise<any> {

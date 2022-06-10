@@ -1,4 +1,6 @@
 import { model, Schema, Document } from 'mongoose';
+import Post from './Post';
+import Track from './Track';
 import Role from './Role';
 
 export const DOCUMENT_NAME = 'User';
@@ -13,8 +15,8 @@ export default interface User extends Document {
   bio?: string;
   followers?: { count: number; users: string[] };
   following?: { count: number; users: string[] };
-  tracks?: string[];
-  posts?: string[];
+  tracks: Track[];
+  posts: Post[];
   dob?: Date;
   password?: string;
   profilePicUrl?: string;

@@ -24,10 +24,8 @@ router.post(
   '/',
   validator(schema.postCreate),
   asyncHandler(async (req: ProtectedRequest, res) => {
-    const post = await PostRepo.findUrlIfExists(req.body.postUrl);
-    if (post) throw new BadRequestError('Post with this url already exists');
+    const url = new Date().toString() + Math.random().toString() + req.user.username;
 
-    console.log('In req.body');
     const createdPost = await PostRepo.create({
       description: req.body?.description,
       tags: req.body?.tags,
@@ -40,7 +38,7 @@ router.post(
       updatedBy: req.user,
       type: req.body.type,
       comments: [],
-      postUrl: req.body.postUrl,
+      postUrl: url,
     } as unknown as Post);
 
     new SuccessResponse('Post created successfully', createdPost).send(res);

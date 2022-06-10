@@ -1,6 +1,7 @@
 import Post, { PostModel } from '../model/Post';
 import { Types } from 'mongoose';
 import User from '../model/User';
+import UserRepo from './UserRepo';
 
 export default class PostRepo {
   private static AUTHOR_DETAIL = 'name profilePicUrl interests username';
@@ -12,7 +13,11 @@ export default class PostRepo {
     const now = new Date();
     post.createdAt = now;
     post.updatedAt = now;
+    post.isPublished = true;
+    post.status = true;
     const createdPost = await PostModel.create(post);
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const res = await UserRepo.userAddPost(post.author, createdPost._id);
     return createdPost;
   }
 
