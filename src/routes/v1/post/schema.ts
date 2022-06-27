@@ -17,6 +17,13 @@ export default {
   }),
   postCreate: Joi.object().keys({
     description: Joi.string().optional().min(3).max(2000),
+
+    // job post specific fields
+    genre: Joi.string().optional().min(3).max(50),
+    location: Joi.string().optional().min(3).max(50),
+    skill: Joi.string().optional().min(3).max(50),
+    duration: Joi.string().optional().min(3).max(50),
+
     imgUrl: Joi.string().optional().uri().max(200),
     vdoUrl: Joi.string().optional().uri().max(200),
     audioUrl: Joi.string().optional().uri().max(200),

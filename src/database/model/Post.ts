@@ -8,6 +8,13 @@ export const COLLECTION_NAME = 'posts';
 
 export default interface Post extends Document {
   description: string;
+
+  // job posting specific fields
+  genre: string;
+  location: string;
+  skill: string;
+  duration: string;
+
   tags: string[];
   author: User;
   imgUrl?: string;
@@ -36,6 +43,26 @@ const schema = new Schema(
       required: true,
       maxlength: 2000,
       trim: true,
+    },
+    genre: {
+      type: Schema.Types.String,
+      required: false,
+      maxlength: 20,
+    },
+    location: {
+      type: Schema.Types.String,
+      required: false,
+      maxlength: 20,
+    },
+    skill: {
+      type: Schema.Types.String,
+      required: false,
+      maxlength: 20,
+    },
+    duration: {
+      type: Schema.Types.String,
+      required: false,
+      maxlength: 20,
     },
     tags: [
       {

@@ -28,6 +28,13 @@ router.post(
 
     const createdPost = await PostRepo.create({
       description: req.body?.description,
+
+      // job post specific fields
+      genre: req.body?.genre,
+      location: req.body?.location,
+      skill: req.body?.skill,
+      duration: req.body?.duration,
+
       tags: req.body?.tags,
       author: req.user,
       imgUrl: req.body?.imgUrl,
