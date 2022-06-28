@@ -128,4 +128,39 @@ export default class UserRepo {
       .lean()
       .exec();
   }
+
+  public static async followProfile({
+    userId,
+    myId,
+  }: {
+    userId: string;
+    myId: string;
+  }): Promise<{ message: string }> {
+    const user = await UserModel.findOne({ _id: userId }).select('+followers').lean<User>().exec();
+    const my = await UserModel.findOne({ _id: myId }).select('+followers').lean<User>().exec();
+    if (!user || !my) throw new InternalError('User not found');
+    if (user.followers.users.includes(my._id)) {
+      user.followers.users = user.followers.users.filter((id) => id !== my._id);
+      user.followers.count--;
+    }
+    user.followers.users.push(my._id);
+    user.followers.count++;
+
+    if (my.following.users.includes(user._id)) {
+      my.following.users = my.following.users.filter((id) => id !== user._id);
+      my.following.count--;
+    }
+    my.following.users.push(user._id);
+    my.following.count++;
+
+    await UserModel.updateOne({ _id: user._id }, { $set: { ...user } })
+      .lean()
+      .exec();
+
+    await UserModel.updateOne({ _id: my._id }, { $set: { ...my } })
+      .lean()
+      .exec();
+
+    return { message: 'success' };
+  }
 }

@@ -5,6 +5,9 @@ export default {
   userId: Joi.object().keys({
     id: JoiObjectId().required(),
   }),
+  followProfile: Joi.object().keys({
+    userId: Joi.string().required().min(1).max(200),
+  }),
   profile: Joi.object().keys({
     name: Joi.string().optional().min(1).max(200),
     profilePicUrl: Joi.string().optional().uri(),

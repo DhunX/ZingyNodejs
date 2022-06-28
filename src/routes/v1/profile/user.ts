@@ -45,6 +45,16 @@ router.get(
 );
 
 router.put(
+  '/follow',
+  validator(schema.followProfile),
+  asyncHandler(async (req: ProtectedRequest, res) => {
+    const user = await UserRepo.followProfile({ myId: req.user._id, userId: req.body.userId });
+    if (!user) throw new BadRequestError('User not registered');
+    return new SuccessResponse('success', user).send(res);
+  }),
+);
+
+router.put(
   '/',
   validator(schema.profile),
   asyncHandler(async (req: ProtectedRequest, res) => {

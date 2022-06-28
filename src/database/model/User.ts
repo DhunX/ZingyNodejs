@@ -13,8 +13,8 @@ export default interface User extends Document {
   phoneNumber?: string;
   location?: string;
   bio?: string;
-  followers?: { count: number; users: string[] };
-  following?: { count: number; users: string[] };
+  followers: { count: number; users: string[] };
+  following: { count: number; users: string[] };
   tracks: Track[];
   posts: Post[];
   dob?: Date;
