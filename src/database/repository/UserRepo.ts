@@ -139,19 +139,24 @@ export default class UserRepo {
     const user = await UserModel.findOne({ _id: userId }).select('+followers').lean<User>().exec();
     const my = await UserModel.findOne({ _id: myId }).select('+followers').lean<User>().exec();
     if (!user || !my) throw new InternalError('User not found');
-    if (user.followers.users.includes(my._id)) {
-      user.followers.users = user.followers.users.filter((id) => id !== my._id);
-      user.followers.count--;
-    }
-    user.followers.users.push(my._id);
-    user.followers.count++;
 
-    if (my.following.users.includes(user._id)) {
-      my.following.users = my.following.users.filter((id) => id !== user._id);
-      my.following.count--;
+    if (user.followers.users.includes(my._id.toString())) {
+      user.followers.users = user.followers.users.filter(
+        (id) => id.toString() !== my._id.toString(),
+      );
+      user.followers.count--;
+    } else {
+      user.followers.users.push(my._id.toString());
+      user.followers.count++;
     }
-    my.following.users.push(user._id);
-    my.following.count++;
+
+    if (my.following.users.includes(user._id.toString())) {
+      my.following.users = my.following.users.filter((id) => id.toString() !== user._id.toString());
+      my.following.count--;
+    } else {
+      my.following.users.push(user._id.toString());
+      my.following.count++;
+    }
 
     await UserModel.updateOne({ _id: user._id }, { $set: { ...user } })
       .lean()
