@@ -24,6 +24,10 @@ export default {
     skill: Joi.string().optional().min(3).max(50),
     duration: Joi.string().optional().min(3).max(50),
 
+    // event post specific fields
+    date: Joi.string().optional().min(3).max(50),
+    eventName: Joi.string().optional().min(3).max(50),
+
     imgUrl: Joi.string().optional().uri().max(200),
     vdoUrl: Joi.string().optional().uri().max(200),
     audioUrl: Joi.string().optional().uri().max(200),

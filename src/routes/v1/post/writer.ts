@@ -35,6 +35,10 @@ router.post(
       skill: req.body?.skill,
       duration: req.body?.duration,
 
+      // event post specific fields
+      date: req.body?.date,
+      eventName: req.body?.eventName,
+
       tags: req.body?.tags,
       author: req.user,
       imgUrl: req.body?.imgUrl,

@@ -15,6 +15,10 @@ export default interface Post extends Document {
   skill: string;
   duration: string;
 
+  //event posting specific fields
+  date: string;
+  eventName: string;
+
   tags: string[];
   author: User;
   imgUrl?: string;
@@ -50,6 +54,16 @@ const schema = new Schema(
       maxlength: 20,
     },
     location: {
+      type: Schema.Types.String,
+      required: false,
+      maxlength: 20,
+    },
+    eventName: {
+      type: Schema.Types.String,
+      required: false,
+      maxlength: 20,
+    },
+    date: {
       type: Schema.Types.String,
       required: false,
       maxlength: 20,
