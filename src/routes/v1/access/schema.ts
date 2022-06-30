@@ -31,6 +31,7 @@ export default {
   signupUsername: Joi.object().keys({
     name: Joi.string().required().min(3),
     username: Joi.string().required().min(4),
+    email: Joi.string().optional().email(),
     password: Joi.string().required().min(6),
     phoneNumber: Joi.string().required().length(10),
     profilePicUrl: Joi.string().optional().uri().min(0),

@@ -34,6 +34,7 @@ router.post(
       {
         name: req.body.name,
         username: req.body.username,
+        email: req.body?.email,
         profilePicUrl: req.body.profilePicUrl,
         phoneNumber: req.body.phoneNumber,
         password: passwordHash,
