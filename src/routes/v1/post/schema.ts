@@ -2,6 +2,9 @@ import Joi from '@hapi/joi';
 import { JoiObjectId } from '../../../helpers/validator';
 
 export default {
+  comment: Joi.object().keys({
+    content: Joi.string().required().min(1),
+  }),
   postId: Joi.object().keys({
     id: JoiObjectId().required(),
   }),

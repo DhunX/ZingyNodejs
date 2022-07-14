@@ -2,6 +2,9 @@ import Post, { PostModel } from '../model/Post';
 import { Types } from 'mongoose';
 import User from '../model/User';
 import UserRepo from './UserRepo';
+import Comment, { CommentModel } from '../model/Comment';
+import CommentRepo from './CommentRepo';
+import LikeRepo from './LikeRepo';
 
 export default class PostRepo {
   private static AUTHOR_DETAIL = 'name profilePicUrl interests username';
@@ -19,6 +22,39 @@ export default class PostRepo {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const res = await UserRepo.userAddPost(post.author, createdPost._id);
     return createdPost;
+  }
+
+  public static async addComment(
+    userId: Types.ObjectId,
+    postId: Types.ObjectId,
+    comment: string,
+  ): Promise<Post> {
+    const post = await PostModel.findOne({ _id: postId });
+    if (!post) {
+      throw new Error('Post not found');
+    }
+    const user = await UserRepo.findById(userId);
+    if (!user) {
+      throw new Error('User not found');
+    }
+    const newComment = await CommentRepo.create(user, post, comment);
+    post.comments.push(newComment);
+    return post.save();
+  }
+
+  public static async likePost(postId: Types.ObjectId, userId: Types.ObjectId): Promise<Post> {
+    const post = await PostModel.findOne({ _id: postId });
+    if (!post) {
+      throw new Error('Post not found');
+    }
+    const user = await UserRepo.findById(userId);
+    if (!user) {
+      throw new Error('User not found');
+    }
+
+    const like = await LikeRepo.create(user, post);
+    post.likes.push(like);
+    return post.save();
   }
 
   public static update(post: Post): Promise<any> {
@@ -133,6 +169,8 @@ export default class PostRepo {
       .skip(limit * (pageNumber - 1))
       .limit(limit)
       .populate('author', this.AUTHOR_DETAIL)
+      .populate('comments')
+      .populate('likes')
       .sort({ publishedAt: -1 })
       .lean<Post[]>()
       .exec();

@@ -4,13 +4,13 @@ export const DOCUMENT_NAME = 'Comment';
 export const COLLECTION_NAME = 'comments';
 
 export default interface Comment extends Document {
-  text: string;
+  content: string;
   author: [username: string, id: string];
 }
 
 const schema = new Schema(
   {
-    text: {
+    content: {
       type: Schema.Types.String,
       required: true,
       select: false,

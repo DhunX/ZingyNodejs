@@ -6,7 +6,7 @@ import { Types } from 'mongoose';
 import validator, { ValidationSource } from '../../../helpers/validator';
 import schema from './schema';
 import asyncHandler from '../../../helpers/asyncHandler';
-import User from '../../../database/model/User';
+import User, { UserModel } from '../../../database/model/User';
 
 const router = express.Router();
 
@@ -67,6 +67,24 @@ router.get(
     if (!posts || posts.length < 1) throw new NoDataError();
 
     return new SuccessResponse('success', posts).send(res);
+  }),
+);
+
+router.post(
+  '/comment/id/:id',
+  validator(schema.postId, ValidationSource.PARAM),
+  validator(schema.comment),
+  asyncHandler(async (req, res) => {
+    const post = await PostRepo.findPostAllDataById(new Types.ObjectId(req.params.id));
+    if (!post || !post.isPublished) throw new BadRequestError('Post is not available');
+
+    const user = await UserModel.findOne({ _id: new Types.ObjectId(req.body.userId) });
+    if (!user) throw new BadRequestError('User is not available');
+
+    const comment = await PostRepo.addComment(user._id, post._id, req.body);
+    if (!comment) throw new BadRequestError('Comment could not be added');
+
+    return new SuccessResponse('success', comment).send(res);
   }),
 );
 

@@ -2,6 +2,7 @@ import { model, Schema, Document } from 'mongoose';
 import Post from './Post';
 import Track from './Track';
 import Role from './Role';
+import Like from './Like';
 
 export const DOCUMENT_NAME = 'User';
 export const COLLECTION_NAME = 'users';
@@ -17,6 +18,7 @@ export default interface User extends Document {
   following: { count: number; users: string[] };
   tracks: Track[];
   posts: Post[];
+  likes: { count: number; likes: Like[] };
   dob?: Date;
   password?: string;
   profilePicUrl?: string;
@@ -96,6 +98,7 @@ const schema = new Schema(
     posts: {
       type: [{ type: Schema.Types.ObjectId, ref: 'Post', required: false }],
     },
+    likes: [{ type: Schema.Types.ObjectId, ref: 'Like', required: false }],
     followers: {
       type: {
         count: {

@@ -2,6 +2,7 @@ import { Schema, model, Document } from 'mongoose';
 import { POST_TYPES } from '../../constants';
 import User from './User';
 import Comment from './Comment';
+import Like from './Like';
 
 export const DOCUMENT_NAME = 'Post';
 export const COLLECTION_NAME = 'posts';
@@ -25,7 +26,6 @@ export default interface Post extends Document {
   postUrl: string;
   audioUrl?: string;
   vdoUrl?: string;
-  likes?: number;
   score: number;
   isSubmitted: boolean;
   isDraft: boolean;
@@ -37,7 +37,8 @@ export default interface Post extends Document {
   createdAt?: Date;
   updatedAt?: Date;
   type: string;
-  comments?: Comment[];
+  likes: Like[];
+  comments: Comment[];
 }
 
 const schema = new Schema(
@@ -116,10 +117,6 @@ const schema = new Schema(
       maxlength: 500,
       trim: true,
     },
-    likes: {
-      type: Schema.Types.Number,
-      default: 0,
-    },
     score: {
       type: Schema.Types.Number,
       default: 0.01,
@@ -193,6 +190,12 @@ const schema = new Schema(
       {
         type: Schema.Types.ObjectId,
         ref: 'Comment',
+      },
+    ],
+    likes: [
+      {
+        type: Schema.Types.ObjectId,
+        ref: 'Like',
       },
     ],
   },
